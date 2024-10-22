@@ -30,7 +30,7 @@ async def bind_account(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
                 'telegram_username': telegram_username,
             }, headers={
                 'X-CSRFToken': csrf_token  # Добавляем CSRF-токен в заголовок
-            })
+            }, cookies={'csrftoken': csrf_token})
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             error_message = f"Ошибка при обращении к серверу: {str(e)}"
