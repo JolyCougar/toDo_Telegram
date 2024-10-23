@@ -1,21 +1,28 @@
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ConversationHandler
 from config import API_TOKEN
 from handlers.start_handler import start
 from utils.logging_config import setup_logging
 from handlers.login_handles import login_command
-from handlers.messages_handle import handle_message
+from handlers.messages_handle import handle_message, handle_task_id, WAITING_FOR_TASK_ID
 
 
 def main() -> None:
     setup_logging()  # Настройка логирования
     application = ApplicationBuilder().token(API_TOKEN).build()
 
-    # Регистрация обработчиков команд
+    # Настройка ConversationHandler
+    conv_handler = ConversationHandler(
+        entry_points=[MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)],
+        states={
+            WAITING_FOR_TASK_ID: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_task_id)],
+        },
+        fallbacks=[],
+    )
+
+    # Регистрация обработчиков
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("login", login_command))  # Обработчик для команды логина
-
-    # Обработчик для текстовых сообщений (включая нажатия кнопок)
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    application.add_handler(conv_handler)  # Регистрация ConversationHandler
 
     # Запуск бота
     application.run_polling()

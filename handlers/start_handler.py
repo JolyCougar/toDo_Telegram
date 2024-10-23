@@ -5,7 +5,8 @@ from telegram.ext import ContextTypes
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
         ["Авторизоваться"],
-        ["Получить невыполненные задачи"]
+        ["Получить невыполненные задачи"],
+        ["Детали задачи"]
     ]
     reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True)
 
