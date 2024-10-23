@@ -15,7 +15,6 @@ def main() -> None:
     application.add_handler(CommandHandler("login", login_command))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-
     # Запуск бота
     application.run_polling()
 
