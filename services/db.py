@@ -20,3 +20,8 @@ def save_token(user_id, token):
     session.merge(user_token)  # Используем merge для обновления или вставки
     session.commit()
     session.close()
+
+
+def get_token(user_id: int, session: Session) -> str:
+    user = session.query(UserToken).filter(UserToken.user_id == user_id).first()
+    return user.token if user else None

@@ -2,7 +2,8 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, fil
 from config import API_TOKEN
 from handlers.start_handler import start
 from utils.logging_config import setup_logging
-from handlers.login_handles import handle_message, login_command
+from handlers.login_handles import login_command
+from handlers.messages_handle import handle_message
 
 
 def main() -> None:
@@ -11,8 +12,9 @@ def main() -> None:
 
     # Регистрация обработчиков команд
     application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("login", login_command))  # Обработчик для команды логина
 
-    application.add_handler(CommandHandler("login", login_command))
+    # Обработчик для текстовых сообщений (включая нажатия кнопок)
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     # Запуск бота
