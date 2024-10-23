@@ -1,6 +1,8 @@
 import requests
 from telegram import Update
 from telegram.ext import ContextTypes
+from services.db import save_token
+from config import DJANGO_API_URL
 
 
 async def request_login_format(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -13,13 +15,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await request_login_format(update, context)
     elif ':' in message:
         username, password = message.split(':', 1)
-        response = requests.post('http://127.0.0.1:8000/api/v1/login/',
+        response = requests.post(DJANGO_API_URL+'login/',
                                  data={'username': username, 'password': password})
 
         if response.status_code == 200:
             token = response.json().get('token')
-            print(response.json())
-            await update.message.reply_text(f"Вы успешно авторизованы! Ваш токен: {token}")
+            user_id = update.message.from_user.id
+
+            # Сохраняем токен в базе данных
+            save_token(user_id, token)
+            await update.message.reply_text("Вы успешно авторизованы!")
         else:
             await update.message.reply_text("Ошибка авторизации. Проверьте имя пользователя и пароль.")
     else:
