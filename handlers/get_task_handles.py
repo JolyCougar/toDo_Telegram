@@ -4,12 +4,12 @@ from telegram.ext import ContextTypes
 from services.db import get_token
 from config import DJANGO_API_URL
 from sqlalchemy.orm import Session
-from services.db import Session as SessionLocal
+from services.db import Session_local
 
 
 async def get_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, complete: str) -> None:
     user_id = update.message.from_user.id
-    session: Session = SessionLocal()
+    session: Session = Session_local()
     status_task = {True: "Выполнено", False: "Не выполнено"}
     token = get_token(user_id, session)  # Получаем токен из базы данных
 
@@ -27,7 +27,7 @@ async def get_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, complete
         tasks = response.json()
         if tasks:
             tasks_list = "\n".join(
-                [f"Задача {task['id']} :  {task['name']} : {task['description']}\n"
+                [f"Задача ID {task['id']} :  {task['name']} : {task['description']}\n"
                  f"Состояние: {status_task[task['complete']]}"
                  for task in tasks
                  ])

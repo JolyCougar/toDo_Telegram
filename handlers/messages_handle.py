@@ -1,10 +1,11 @@
 from telegram.ext import ContextTypes, ConversationHandler
-from services.db import save_token
+from services.db import save_token, get_token, Session_local
 from config import DJANGO_API_URL
-from .login_handles import request_login_format
+from .login_handles import request_login_format, logout
 from .get_task_handles import get_tasks
 from .task_detail_handlers import detail_tasks
-from telegram import Update, ReplyKeyboardMarkup
+from telegram import Update
+from handlers.start_handler import start
 import requests
 
 # Определяем состояния
@@ -13,9 +14,14 @@ WAITING_FOR_TASK_ID = range(1)
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message = update.message.text
+    user_id = update.message.from_user.id
+    session = Session_local()
+    token = get_token(user_id, session)  # Получаем токен из базы данных
 
     if message == "Авторизоваться":
         await request_login_format(update, context)
+    elif message == "Выйти":
+        await logout(update, user_id)  # Вызываем функцию выхода
     elif message == "Получить невыполненные задачи":
         await get_tasks(update, context, complete='?complete=false')  # Передаем аргумент для невыполненных задач
     elif message == "Получить выполненные задачи":
@@ -31,13 +37,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
         if response.status_code == 200:
             token = response.json().get('token')
-            user_id = update.message.from_user.id
-
             # Сохраняем токен в базе данных
             save_token(user_id, token)
             await update.message.reply_text("Вы успешно авторизованы!")
 
-            # Обновляем клавиатуру, убирая кнопку "Авторизоваться"
+            # Обновляем клавиатуру
             await start(update, context)  # Перезапускаем стартовое меню
         else:
             await update.message.reply_text("Ошибка авторизации. Проверьте имя пользователя и пароль.")

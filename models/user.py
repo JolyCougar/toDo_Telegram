@@ -8,4 +8,4 @@ class UserToken(Base):
     __tablename__ = 'user_tokens'
 
     user_id = Column(Integer, primary_key=True)
-    token = Column(String, nullable=False)
+    token = Column(String, nullable=True)

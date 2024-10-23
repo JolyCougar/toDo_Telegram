@@ -4,14 +4,14 @@ from telegram.ext import ContextTypes, ConversationHandler
 from services.db import get_token
 from config import DJANGO_API_URL
 from sqlalchemy.orm import Session
-from services.db import Session as SessionLocal
+from services.db import Session_local
 
 WAITING_FOR_TASK_ID = range(1)
 
 
 async def detail_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, task_id: str) -> None:
     user_id = update.message.from_user.id
-    session: Session = SessionLocal()
+    session: Session = Session_local()
     token = get_token(user_id, session)  # Получаем токен из базы данных
 
     if not token:
