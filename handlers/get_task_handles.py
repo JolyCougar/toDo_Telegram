@@ -7,9 +7,10 @@ from sqlalchemy.orm import Session
 from services.db import Session as SessionLocal
 
 
-async def get_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def get_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, complete: str) -> None:
     user_id = update.message.from_user.id
     session: Session = SessionLocal()
+    status_task = {True: "Выполнено", False: "Не выполнено"}
     token = get_token(user_id, session)  # Получаем токен из базы данных
 
     if not token:
@@ -20,15 +21,15 @@ async def get_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         'Authorization': f'Token {token}'  # Указываем токен в заголовках
     }
 
-    response = requests.get(f"{DJANGO_API_URL}tasks/", headers=headers)
+    response = requests.get(f"{DJANGO_API_URL}tasks/{complete}", headers=headers)
 
     if response.status_code == 200:
         tasks = response.json()
         if tasks:
             tasks_list = "\n".join(
-                [f"Задача {task['id']} :  {task['name']}: Описание {task['description']}"
+                [f"Задача {task['id']} :  {task['name']} : {task['description']}\n"
+                 f"Состояние: {status_task[task['complete']]}"
                  for task in tasks
-                 if not task['complete']
                  ])
 
             await update.message.reply_text(f"Ваши задачи:\n{tasks_list}")

@@ -17,7 +17,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if message == "Авторизоваться":
         await request_login_format(update, context)
     elif message == "Получить невыполненные задачи":
-        await get_tasks(update, context)
+        await get_tasks(update, context, complete='?complete=false')  # Передаем аргумент для невыполненных задач
+    elif message == "Получить выполненные задачи":
+        await get_tasks(update, context, complete='?complete=true')  # Передаем аргумент для выполненных задач
+    elif message == "Получить все задачи":
+        await get_tasks(update, context, complete='')  # Передаем пустую строку для всех задач
     elif message == "Детали задачи":
         await update.message.reply_text("Пожалуйста, введите ID задачи:")
         return WAITING_FOR_TASK_ID  # Переход к состоянию ожидания ID задачи
@@ -34,9 +38,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             await update.message.reply_text("Вы успешно авторизованы!")
 
             # Обновляем клавиатуру, убирая кнопку "Авторизоваться"
-            await update.message.reply_text("Добро пожаловать!",
-                                            reply_markup=ReplyKeyboardMarkup([],
-                                                                             one_time_keyboard=True))
+            await start(update, context)  # Перезапускаем стартовое меню
         else:
             await update.message.reply_text("Ошибка авторизации. Проверьте имя пользователя и пароль.")
     else:
