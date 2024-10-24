@@ -4,12 +4,12 @@ from config import DJANGO_API_URL
 from .login_handles import request_login_format, logout
 from .get_task_handles import get_tasks
 from .task_detail_handlers import detail_tasks
+from .confirm_task import confirm_tasks
 from telegram import Update
 from handlers.start_handler import start
 import requests
 
-# Определяем состояния
-WAITING_FOR_TASK_ID = range(1)
+WAITING_FOR_TASK_ID, CONFIRMING_TASK = range(2)
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -30,7 +30,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await get_tasks(update, context, complete='')  # Передаем пустую строку для всех задач
     elif message == "Детали задачи":
         await update.message.reply_text("Пожалуйста, введите ID задачи:")
+        context.user_data['state'] = WAITING_FOR_TASK_ID
         return WAITING_FOR_TASK_ID  # Переход к состоянию ожидания ID задачи
+    elif message == "Подтвердить задачу":
+        await update.message.reply_text("Пожалуйста, введите ID задачи для подтверждения:")
+        context.user_data['state'] = CONFIRMING_TASK
+        return CONFIRMING_TASK  # Переход к состоянию подтверждения задачи
     elif ':' in message:
         username, password = message.split(':', 1)
         response = requests.post(f"{DJANGO_API_URL}login/", data={'username': username, 'password': password})
@@ -51,6 +56,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
 async def handle_task_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     task_id = update.message.text
-    await detail_tasks(update, context, task_id)  # Передаем ID задачи в функцию
+    if context.user_data.get('state') == WAITING_FOR_TASK_ID:
+        await detail_tasks(update, context, task_id)  # Передаем ID задачи в функцию
+    elif context.user_data.get('state') == CONFIRMING_TASK:
+        await confirm_tasks(update, context, task_id)  # Подтверждаем задачу по ID
 
-    return ConversationHandler.END  # Завершаем разговор
+    return ConversationHandler.END

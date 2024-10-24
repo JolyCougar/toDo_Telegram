@@ -3,7 +3,7 @@ from config import API_TOKEN
 from handlers.start_handler import start
 from utils.logging_config import setup_logging
 from handlers.login_handles import login_command
-from handlers.messages_handle import handle_message, handle_task_id, WAITING_FOR_TASK_ID
+from handlers.messages_handle import handle_message, handle_task_id, WAITING_FOR_TASK_ID, CONFIRMING_TASK
 
 
 def main() -> None:
@@ -15,6 +15,7 @@ def main() -> None:
         entry_points=[MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)],
         states={
             WAITING_FOR_TASK_ID: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_task_id)],
+            CONFIRMING_TASK: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_task_id)],
         },
         fallbacks=[],
     )
