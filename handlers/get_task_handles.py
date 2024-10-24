@@ -5,6 +5,7 @@ from services.db import get_token
 from config import DJANGO_API_URL
 from sqlalchemy.orm import Session
 from services.db import Session_local
+from .start_handler import send_main_keyboard
 
 
 async def get_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, complete: str) -> None:
@@ -37,3 +38,6 @@ async def get_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, complete
             await update.message.reply_text("У вас нет задач.")
     else:
         await update.message.reply_text("Ошибка при получении задач. Попробуйте позже.")
+
+    is_authorized = token is not None
+    await send_main_keyboard(update, is_authorized)

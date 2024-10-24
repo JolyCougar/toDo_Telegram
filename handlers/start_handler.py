@@ -29,3 +29,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     reply_markup = get_main_keyboard(is_authorized)
     await update.message.reply_text("Добро пожаловать! Выберите действие:", reply_markup=reply_markup)
+
+
+async def send_main_keyboard(update: Update, is_authorized: bool) -> None:
+    reply_markup = get_main_keyboard(is_authorized)
+    await update.message.reply_text("Выберите действие:", reply_markup=reply_markup)

@@ -5,6 +5,7 @@ from services.db import get_token
 from config import DJANGO_API_URL
 from sqlalchemy.orm import Session
 from services.db import Session_local
+from .start_handler import send_main_keyboard
 
 WAITING_FOR_TASK_ID = range(1)
 
@@ -30,7 +31,7 @@ async def detail_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, task_
             task_status = "Не выполнена"
             if task.get("complete"):
                 task_status = "Выполнена"
-            task_details = (f'Задача: {task.get('name')}\n'
+            task_details = (f'Задача ID {task.get('id')}: {task.get('name')}\n'
                             f'Описание: {task.get('description')}\n'
                             f'Добавлена: {task.get("create_at")[:10]}\n'
                             f'Состояние: {task_status}\n')
@@ -39,4 +40,7 @@ async def detail_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, task_
             await update.message.reply_text("Нет такой задачи.")
     else:
         await update.message.reply_text("Ошибка при получении задачи. Попробуйте позже.")
+
+    is_authorized = token is not None
+    await send_main_keyboard(update, is_authorized)
 

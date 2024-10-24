@@ -3,6 +3,7 @@ from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
 from services.db import get_token, Session_local
 from config import DJANGO_API_URL
+from .start_handler import send_main_keyboard
 
 WAITING_FOR_TASK_DESCRIPTION = range(2)
 
@@ -48,4 +49,6 @@ async def handle_task_description(update: Update, context: ContextTypes.DEFAULT_
 
     # Сброс состояния
     context.user_data.clear()
+    is_authorized = token is not None
+    await send_main_keyboard(update, is_authorized)
     return ConversationHandler.END

@@ -16,7 +16,6 @@ WAITING_FOR_TASK_ID = range(3)  # Состояние ожидания ID зад�
 CONFIRMING_TASK = range(4)  # Состояние подтверждения задачи
 
 
-
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message = update.message.text
     user_id = update.message.from_user.id
