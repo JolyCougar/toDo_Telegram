@@ -4,12 +4,17 @@ from config import DJANGO_API_URL
 from .login_handles import request_login_format, logout
 from .get_task_handles import get_tasks
 from .task_detail_handlers import detail_tasks
-from .confirm_task import confirm_tasks
+from .confirm_task_handle import confirm_tasks
+from .create_new_task_handle import handle_task_title, handle_task_description
 from telegram import Update
 from handlers.start_handler import start
 import requests
 
-WAITING_FOR_TASK_ID, CONFIRMING_TASK = range(2)
+WAITING_FOR_TASK_TITLE = range(1)  # Состояние ожидания названия задачи
+WAITING_FOR_TASK_DESCRIPTION = range(2)  # Состояние ожидания описания задачи
+WAITING_FOR_TASK_ID = range(3)  # Состояние ожидания ID задачи
+CONFIRMING_TASK = range(4)  # Состояние подтверждения задачи
+
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -36,6 +41,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text("Пожалуйста, введите ID задачи для подтверждения:")
         context.user_data['state'] = CONFIRMING_TASK
         return CONFIRMING_TASK  # Переход к состоянию подтверждения задачи
+    elif message == "Добавить новую задачу":
+        await update.message.reply_text("Пожалуйста, введите название задачи:")
+        context.user_data['state'] = WAITING_FOR_TASK_TITLE  # Устанавливаем состояние
+        return WAITING_FOR_TASK_TITLE
     elif ':' in message:
         username, password = message.split(':', 1)
         response = requests.post(f"{DJANGO_API_URL}login/", data={'username': username, 'password': password})
@@ -55,10 +64,18 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
 
 async def handle_task_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    state = context.user_data.get('state')
     task_id = update.message.text
-    if context.user_data.get('state') == WAITING_FOR_TASK_ID:
-        await detail_tasks(update, context, task_id)  # Передаем ID задачи в функцию
-    elif context.user_data.get('state') == CONFIRMING_TASK:
-        await confirm_tasks(update, context, task_id)  # Подтверждаем задачу по ID
+
+    if state == WAITING_FOR_TASK_TITLE:
+        await handle_task_title(update, context)
+    elif state == WAITING_FOR_TASK_DESCRIPTION:
+        await handle_task_description(update, context)
+    elif state == WAITING_FOR_TASK_ID:
+        await detail_tasks(update, context, task_id)
+    elif state == CONFIRMING_TASK:
+        await confirm_tasks(update, context, task_id)
+    else:
+        await update.message.reply_text("Неизвестное состояние. Пожалуйста, начните заново.")
 
     return ConversationHandler.END

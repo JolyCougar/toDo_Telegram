@@ -1,9 +1,14 @@
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ConversationHandler
+from telegram.ext import (ApplicationBuilder, CommandHandler,
+                          MessageHandler, filters,
+                          ConversationHandler)
 from config import API_TOKEN
 from handlers.start_handler import start
 from utils.logging_config import setup_logging
 from handlers.login_handles import login_command
-from handlers.messages_handle import handle_message, handle_task_id, WAITING_FOR_TASK_ID, CONFIRMING_TASK
+from handlers.create_new_task_handle import handle_task_title, handle_task_description
+from handlers.messages_handle import (handle_message, handle_task_id,
+                                      WAITING_FOR_TASK_ID, CONFIRMING_TASK,
+                                      WAITING_FOR_TASK_TITLE, WAITING_FOR_TASK_DESCRIPTION)
 
 
 def main() -> None:
@@ -16,6 +21,8 @@ def main() -> None:
         states={
             WAITING_FOR_TASK_ID: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_task_id)],
             CONFIRMING_TASK: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_task_id)],
+            WAITING_FOR_TASK_TITLE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_task_title)],
+            WAITING_FOR_TASK_DESCRIPTION: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_task_description)],
         },
         fallbacks=[],
     )

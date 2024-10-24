@@ -6,11 +6,12 @@ from services.db import get_token, Session_local
 def get_main_keyboard(is_authorized: bool) -> ReplyKeyboardMarkup:
     if is_authorized:
         keyboard = [
+            ["Добавить новую задачу"],
+            ["Подтвердить задачу"],
             ["Получить невыполненные задачи"],
             ["Получить выполненные задачи"],
             ["Получить все задачи"],
             ["Детали задачи"],
-            ["Подтвердить задачу"],
             ["Выйти"]
         ]
     else:
