@@ -67,8 +67,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             await start(update, context)  # Перезапускаем стартовое меню
         else:
             await update.message.reply_text("Ошибка авторизации. Проверьте имя пользователя и пароль.")
-    else:
-        await update.message.reply_text("Неверный формат. Используйте: username:password.")
 
 
 async def handle_task_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
