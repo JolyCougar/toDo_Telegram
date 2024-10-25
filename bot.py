@@ -8,7 +8,8 @@ from handlers.login_handles import login_command
 from handlers.create_new_task_handle import handle_task_title, handle_task_description
 from handlers.messages_handle import (handle_message, handle_task_id,
                                       WAITING_FOR_TASK_ID, CONFIRMING_TASK,
-                                      WAITING_FOR_TASK_TITLE, WAITING_FOR_TASK_DESCRIPTION)
+                                      WAITING_FOR_TASK_TITLE, WAITING_FOR_TASK_DESCRIPTION,
+                                      DELETE_TASK)
 
 
 def main() -> None:
@@ -23,6 +24,7 @@ def main() -> None:
             CONFIRMING_TASK: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_task_id)],
             WAITING_FOR_TASK_TITLE: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_task_title)],
             WAITING_FOR_TASK_DESCRIPTION: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_task_description)],
+            DELETE_TASK: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_task_id)],
         },
         fallbacks=[],
     )

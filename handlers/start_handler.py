@@ -12,6 +12,7 @@ def get_main_keyboard(is_authorized: bool) -> ReplyKeyboardMarkup:
             ["Получить выполненные задачи"],
             ["Получить все задачи"],
             ["Детали задачи"],
+            ["Удалить задачу"],
             ["Выйти"]
         ]
     else:

@@ -6,6 +6,7 @@ from .get_task_handles import get_tasks
 from .task_detail_handlers import detail_tasks
 from .confirm_task_handle import confirm_tasks
 from .create_new_task_handle import handle_task_title, handle_task_description
+from .delete_handle import delete_task
 from telegram import Update
 from handlers.start_handler import start
 import requests
@@ -14,6 +15,7 @@ WAITING_FOR_TASK_TITLE = range(1)  # Состояние ожидания наз�
 WAITING_FOR_TASK_DESCRIPTION = range(2)  # Состояние ожидания описания задачи
 WAITING_FOR_TASK_ID = range(3)  # Состояние ожидания ID задачи
 CONFIRMING_TASK = range(4)  # Состояние подтверждения задачи
+DELETE_TASK = range(5)
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -40,6 +42,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text("Пожалуйста, введите ID задачи для подтверждения:")
         context.user_data['state'] = CONFIRMING_TASK
         return CONFIRMING_TASK  # Переход к состоянию подтверждения задачи
+    elif message == "Удалить задачу":
+        await update.message.reply_text("Пожалуйста, введите ID задачи для удаления:")
+        context.user_data['state'] = DELETE_TASK
+        return DELETE_TASK  # Переход к состоянию удаления задачи
     elif message == "Добавить новую задачу":
         await update.message.reply_text("Пожалуйста, введите название задачи:")
         context.user_data['state'] = WAITING_FOR_TASK_TITLE  # Устанавливаем состояние
@@ -74,6 +80,8 @@ async def handle_task_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await detail_tasks(update, context, task_id)
     elif state == CONFIRMING_TASK:
         await confirm_tasks(update, context, task_id)
+    elif state == DELETE_TASK:
+        await delete_task(update, context, task_id)
     else:
         await update.message.reply_text("Неизвестное состояние. Пожалуйста, начните заново.")
 
