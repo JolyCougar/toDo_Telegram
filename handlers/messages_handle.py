@@ -6,6 +6,7 @@ from .get_task_handles import get_tasks
 from .task_detail_handlers import detail_tasks
 from .confirm_task_handle import confirm_tasks
 from .create_new_task_handle import handle_task_title, handle_task_description
+from .profile_handle import profile_detail
 from .delete_handle import delete_task
 from telegram import Update
 from handlers.start_handler import start
@@ -46,6 +47,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text("Пожалуйста, введите ID задачи для удаления:")
         context.user_data['state'] = DELETE_TASK
         return DELETE_TASK  # Переход к состоянию удаления задачи
+    elif message == "Посмотреть мой профиль":
+        await profile_detail(update, context)
     elif message == "Добавить новую задачу":
         await update.message.reply_text("Пожалуйста, введите название задачи:")
         context.user_data['state'] = WAITING_FOR_TASK_TITLE  # Устанавливаем состояние
