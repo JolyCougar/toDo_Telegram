@@ -18,12 +18,12 @@ async def get_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, complete
     if not token and local_mode:
         await update.message.reply_text("Вы не авторизованы. Бот работает в локальном режиме.")
         task_list = get_tasks_from_local(user_id, session, complete)
-        await update.message.reply_text("Ваши задачи:")
-        for task in task_list:
-            await update.message.reply_text(f"Название: {task.title}\n"
-                                            f"Описание: {task.description}\n"
-                                            f"Состояние: {status_task[task.is_completed]}")
-
+        text = "".join(
+                    [f"Задача ID {task.id} :  {task.title} : {task.description}\n"
+                     f"Состояние: {status_task[task.is_completed]}"
+                     for task in task_list
+                     ])
+        await update.message.reply_text(f"Ваши задачи:\n{text}")
 
     elif token:
         headers = {

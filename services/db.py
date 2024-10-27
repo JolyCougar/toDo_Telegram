@@ -61,7 +61,7 @@ def delete_task(task_id: int, session: Session_local) -> bool:
 def complete_task(task_id: int, session: Session_local) -> bool:
     task = session.query(Task).filter_by(id=task_id).first()
     if task:
-        task.complete = True
+        task.is_completed = True
         session.commit()
         return True
     return False
@@ -69,11 +69,9 @@ def complete_task(task_id: int, session: Session_local) -> bool:
 
 def get_tasks_from_local(user_id: int, session: Session_local, completed: bool = None) -> list:
     query = session.query(Task).filter_by(user_id=user_id)
-    print(completed)
 
     if completed is not None:
         query = query.filter_by(is_completed=completed)
-        print(query)
     return query.all()
 
 

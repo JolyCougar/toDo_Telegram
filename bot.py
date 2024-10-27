@@ -16,6 +16,7 @@ async def error_handler(update, context):
     """Обработчик ошибок."""
     print(f'Произошла ошибка: {context.error}')
 
+
 def main() -> None:
     setup_logging()  # Настройка логирования
     application = ApplicationBuilder().token(API_TOKEN).build()
