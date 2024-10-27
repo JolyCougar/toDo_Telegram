@@ -12,6 +12,10 @@ from handlers.messages_handle import (handle_message, handle_task_id,
                                       DELETE_TASK)
 
 
+async def error_handler(update, context):
+    """Обработчик ошибок."""
+    print(f'Произошла ошибка: {context.error}')
+
 def main() -> None:
     setup_logging()  # Настройка логирования
     application = ApplicationBuilder().token(API_TOKEN).build()
@@ -33,6 +37,8 @@ def main() -> None:
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("login", login_command))  # Обработчик для команды логина
     application.add_handler(conv_handler)  # Регистрация ConversationHandler
+
+    application.add_error_handler(error_handler)
 
     # Запуск бота
     application.run_polling()

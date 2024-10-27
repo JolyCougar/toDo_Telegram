@@ -1,7 +1,7 @@
 import requests
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
-from services.db import get_token, Session_local
+from services.db import get_token, Session_local, get_local_mode, add_task
 from config import DJANGO_API_URL
 from .start_handler import send_main_keyboard
 
@@ -20,35 +20,37 @@ async def handle_task_title(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 async def handle_task_description(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     task_description = update.message.text
     task_title = context.user_data.get('task_title')  # Получаем название задачи
-
     # Отправляем данные на ваш Django API
     user_id = update.message.from_user.id
     session = Session_local()
+    local_mode = get_local_mode(user_id, session)
     token = get_token(user_id, session)
 
-    if not token:
-        await update.message.reply_text("Вы не авторизованы. Пожалуйста, авторизуйтесь.")
-        return
+    if not token and local_mode:
+        add_task(user_id, task_title, task_description, session)
+        await update.message.reply_text("Задача успешно добавлена в локальную базу данных!")
+        await update.message.reply_text("Вы не авторизованы. Бот работает в локальном режиме.")
 
-    headers = {
-        'Authorization': f'Token {token}'
-    }
+    elif token:
+        headers = {
+            'Authorization': f'Token {token}'
+        }
 
-    # Создаем задачу
-    task_data = {
-        'name': task_title,
-        'description': task_description
-    }
+        # Создаем задачу
+        task_data = {
+            'name': task_title,
+            'description': task_description
+        }
 
-    response = requests.post(f"{DJANGO_API_URL}tasks/create/", json=task_data, headers=headers)
+        response = requests.post(f"{DJANGO_API_URL}tasks/create/", json=task_data, headers=headers)
 
-    if response.status_code == 201:  # Успешное создание задачи
-        await update.message.reply_text("Задача успешно добавлена!")
-    else:
-        await update.message.reply_text("Ошибка при добавлении задачи. Проверьте данные и попробуйте снова.")
+        if response.status_code == 201:  # Успешное создание задачи
+            await update.message.reply_text("Задача успешно добавлена!")
+        else:
+            await update.message.reply_text("Ошибка при добавлении задачи. Проверьте данные и попробуйте снова.")
 
-    # Сброс состояния
-    context.user_data.clear()
+        # Сброс состояния
+        context.user_data.clear()
     is_authorized = token is not None
-    await send_main_keyboard(update, is_authorized)
+    await send_main_keyboard(update, is_authorized, local_mode)
     return ConversationHandler.END

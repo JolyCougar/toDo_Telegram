@@ -1,5 +1,5 @@
 from telegram.ext import ContextTypes, ConversationHandler
-from services.db import save_token, get_token, Session_local
+from services.db import save_token, get_token, Session_local, set_local_mode
 from config import DJANGO_API_URL
 from .login_handles import request_login_format, logout
 from .get_task_handles import get_tasks
@@ -11,6 +11,7 @@ from .delete_handle import delete_task
 from telegram import Update
 from handlers.start_handler import start
 import requests
+from .handle_local import handle_local_mode
 
 WAITING_FOR_TASK_TITLE = range(1)  # Состояние ожидания названия задачи
 WAITING_FOR_TASK_DESCRIPTION = range(2)  # Состояние ожидания описания задачи
@@ -27,12 +28,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     if message == "Авторизоваться":
         await request_login_format(update, context)
+    if message == "Без авторизации":
+        await handle_local_mode(update, context)
     elif message == "Выйти":
         await logout(update, user_id)  # Вызываем функцию выхода
     elif message == "Получить невыполненные задачи":
-        await get_tasks(update, context, complete='?complete=false')  # Передаем аргумент для невыполненных задач
+        await get_tasks(update, context, complete='false')  # Передаем аргумент для невыполненных задач
     elif message == "Получить выполненные задачи":
-        await get_tasks(update, context, complete='?complete=true')  # Передаем аргумент для выполненных задач
+        await get_tasks(update, context, complete='true')  # Передаем аргумент для выполненных задач
     elif message == "Получить все задачи":
         await get_tasks(update, context, complete='')  # Передаем пустую строку для всех задач
     elif message == "Детали задачи":
@@ -61,6 +64,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             token = response.json().get('token')
             # Сохраняем токен в базе данных
             save_token(user_id, token)
+            set_local_mode(user_id, False, session)
             await update.message.reply_text("Вы успешно авторизованы!")
 
             # Обновляем клавиатуру
