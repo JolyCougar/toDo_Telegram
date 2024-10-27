@@ -13,3 +13,4 @@ async def handle_local_mode(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     # Устанавливаем local_mode в True
     set_local_mode(user_id, True, session)
     await update.message.reply_text("Вы перешли в локальный режим. Теперь все действия будут выполняться локально.")
+    await send_main_keyboard(update,False, True)
