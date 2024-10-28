@@ -33,9 +33,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif message == "Выйти":
         await logout(update, user_id)  # Вызываем функцию выхода
     elif message == "Получить невыполненные задачи":
-        await get_tasks(update, context, complete='false')  # Передаем аргумент для невыполненных задач
+        await get_tasks(update, context, complete='False')  # Передаем аргумент для невыполненных задач
     elif message == "Получить выполненные задачи":
-        await get_tasks(update, context, complete='true')  # Передаем аргумент для выполненных задач
+        await get_tasks(update, context, complete='True')  # Передаем аргумент для выполненных задач
     elif message == "Получить все задачи":
         await get_tasks(update, context, complete='')  # Передаем пустую строку для всех задач
     elif message == "Детали задачи":

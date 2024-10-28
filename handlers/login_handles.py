@@ -3,7 +3,7 @@ from config import DJANGO_API_URL
 from telegram import Update
 from telegram.ext import ContextTypes
 from services.db import save_token, get_token, Session_local
-from handlers.start_handler import start
+from handlers.start_handler import send_main_keyboard
 
 
 async def request_login_format(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -33,4 +33,4 @@ async def logout(update: Update, user_id: int) -> None:
     else:
         await update.message.reply_text("Ошибка при выходе из системы. Попробуйте позже.")
 
-    await start(update, None)  # Обновляем клавиатуру
+    await send_main_keyboard(update, is_authorized=False, local_mode=False)  # Обновляем клавиатуру

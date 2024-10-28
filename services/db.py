@@ -49,7 +49,7 @@ def add_task(user_id: int, title: str, description: str, session: Session_local)
     return new_task
 
 
-def delete_task(task_id: int, session: Session_local) -> bool:
+def delete_task_local(task_id: int, session: Session_local) -> bool:
     task = session.query(Task).filter_by(id=task_id).first()
     if task:
         session.delete(task)
@@ -67,10 +67,10 @@ def complete_task(task_id: int, session: Session_local) -> bool:
     return False
 
 
-def get_tasks_from_local(user_id: int, session: Session_local, completed: bool = None) -> list:
+def get_tasks_from_local(user_id: int, session: Session_local, completed: bool = '') -> list:
     query = session.query(Task).filter_by(user_id=user_id)
 
-    if completed is not None:
+    if completed != '':
         query = query.filter_by(is_completed=completed)
     return query.all()
 

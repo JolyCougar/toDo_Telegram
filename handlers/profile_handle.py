@@ -37,4 +37,4 @@ async def profile_detail(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text("Ошибка при получении профиля. Попробуйте позже.")
 
     is_authorized = token is not None
-    await send_main_keyboard(update, is_authorized)
+    await send_main_keyboard(update, is_authorized, local_mode=False)
