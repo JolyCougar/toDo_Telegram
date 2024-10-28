@@ -26,6 +26,7 @@ def get_main_keyboard(is_authorized: bool, local_mode: bool) -> ReplyKeyboardMar
             ["Детали задачи"],
             ["Удалить задачу"],
             ["Посмотреть мой профиль"],
+            ['Синхронизировать задачи'],
             ["Выйти"]
         ]
     elif local_mode:

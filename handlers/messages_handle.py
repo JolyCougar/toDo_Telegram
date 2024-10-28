@@ -6,7 +6,8 @@ from .task_detail_handlers import detail_tasks
 from .confirm_task_handle import confirm_tasks
 from .profile_handle import profile_detail
 from .delete_handle import delete_task
-from handlers.start_handler import start
+from .start_handler import start
+from .sync_task_handler import sync_task
 from .handle_local import handle_local_mode
 from telegram.ext import ContextTypes, ConversationHandler
 from .login_handles import request_login_format, logout
@@ -59,6 +60,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text("Пожалуйста, введите название задачи:")
         context.user_data['state'] = WAITING_FOR_TASK_TITLE  # Устанавливаем состояние
         return WAITING_FOR_TASK_TITLE
+    elif message == "Синхронизировать задачи":
+        await update.message.reply_text("Начинается синхронизация. Пожалуйста подождите. "
+                                        "После выполнения синхронизации, ваши локальные задачи удалятся и "
+                                        "будут доступны только на вашем аккаунте")
+        await sync_task(update, context)
     elif ':' in message:
         username, password = message.split(':', 1)
         response = requests.post(f"{DJANGO_API_URL}login/", data={'username': username, 'password': password})
