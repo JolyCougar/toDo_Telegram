@@ -11,7 +11,7 @@ WAITING_FOR_TASK_ID = range(1)
 
 
 async def detail_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, task_id: str) -> None:
-    """ Получения детализированной информации о задачи с сервера """
+    """ Получения детализированной информации о задаче с сервера """
 
     user_id = update.message.from_user.id
     session: Session = Session_local()
