@@ -7,7 +7,7 @@ from config import DB_USER, DB_PASSWORD, DB_HOST, DB_NAME
 DB_URL = f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}'
 
 # Создаем движок и сессию
-engine = create_engine(DB_URL)
+engine = create_engine(DB_URL,  pool_size=10, max_overflow=20, pool_timeout=60)
 Session_local = sessionmaker(bind=engine)
 
 # Создаем таблицы, если они не существуют
