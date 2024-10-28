@@ -9,6 +9,8 @@ from .start_handler import send_main_keyboard
 
 
 async def profile_detail(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """ Получение информации о пользователе зарегистрированном на сайте """
+
     user_id = update.message.from_user.id
     session: Session = Session_local()
     token = get_token(user_id, session)  # Получаем токен из базы данных

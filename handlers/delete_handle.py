@@ -11,6 +11,8 @@ DELETE_TASK = range(5)
 
 
 async def delete_task(update: Update, context: ContextTypes.DEFAULT_TYPE, task_id: str) -> None:
+    """ Удаление задачи в зависимости от флага local_mode либо с сервера либо из локальной БД """
+
     user_id = update.message.from_user.id
     session: Session = Session_local()
     token = get_token(user_id, session)  # Получаем токен из базы данных

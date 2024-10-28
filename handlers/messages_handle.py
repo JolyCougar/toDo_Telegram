@@ -1,26 +1,29 @@
-from telegram.ext import ContextTypes, ConversationHandler
-from services.db import save_token, get_token, Session_local, set_local_mode
+import requests
+from telegram import Update
 from config import DJANGO_API_URL
-from .login_handles import request_login_format, logout
 from .get_task_handles import get_tasks
 from .task_detail_handlers import detail_tasks
 from .confirm_task_handle import confirm_tasks
-from .create_new_task_handle import handle_task_title, handle_task_description
 from .profile_handle import profile_detail
 from .delete_handle import delete_task
-from telegram import Update
 from handlers.start_handler import start
-import requests
 from .handle_local import handle_local_mode
+from telegram.ext import ContextTypes, ConversationHandler
+from .login_handles import request_login_format, logout
+from .create_new_task_handle import handle_task_title, handle_task_description
+from services.db import save_token, get_token, Session_local, set_local_mode
 
+""" Состояния бота"""
 WAITING_FOR_TASK_TITLE = range(1)  # Состояние ожидания названия задачи
 WAITING_FOR_TASK_DESCRIPTION = range(2)  # Состояние ожидания описания задачи
 WAITING_FOR_TASK_ID = range(3)  # Состояние ожидания ID задачи
 CONFIRMING_TASK = range(4)  # Состояние подтверждения задачи
-DELETE_TASK = range(5)
+DELETE_TASK = range(5)  # Состояние ожидания ID задачи для удаления
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """ Обработка команд бота вызванные с клавиатуры """
+
     message = update.message.text
     user_id = update.message.from_user.id
     session = Session_local()
@@ -74,6 +77,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
 
 async def handle_task_id(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """ Внедрения состояния в context """
+
     state = context.user_data.get('state')
     task_id = update.message.text
 

@@ -11,6 +11,8 @@ WAITING_FOR_TASK_ID = range(1)
 
 
 async def detail_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, task_id: str) -> None:
+    """ Получения детализированной информации о задачи с сервера """
+
     user_id = update.message.from_user.id
     session: Session = Session_local()
     token = get_token(user_id, session)  # Получаем токен из базы данных
@@ -43,4 +45,4 @@ async def detail_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, task_
 
     is_authorized = token is not None
     await send_main_keyboard(update, is_authorized, local_mode=False)
-
+    return ConversationHandler.END

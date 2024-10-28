@@ -15,6 +15,7 @@ async def login_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 
 async def logout(update: Update, user_id: int) -> None:
+    """ Логика logout """
     # Получаем токен из базы данных
     session = Session_local()
     token = get_token(user_id, session)

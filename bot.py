@@ -1,11 +1,11 @@
-from telegram.ext import (ApplicationBuilder, CommandHandler,
-                          MessageHandler, filters,
-                          ConversationHandler)
 from config import API_TOKEN
 from handlers.start_handler import start
 from utils.logging_config import setup_logging
 from handlers.login_handles import login_command
 from handlers.create_new_task_handle import handle_task_title, handle_task_description
+from telegram.ext import (ApplicationBuilder, CommandHandler,
+                          MessageHandler, filters,
+                          ConversationHandler)
 from handlers.messages_handle import (handle_message, handle_task_id,
                                       WAITING_FOR_TASK_ID, CONFIRMING_TASK,
                                       WAITING_FOR_TASK_TITLE, WAITING_FOR_TASK_DESCRIPTION,
@@ -14,10 +14,13 @@ from handlers.messages_handle import (handle_message, handle_task_id,
 
 async def error_handler(update, context):
     """Обработчик ошибок."""
+
     print(f'Произошла ошибка: {context.error}')
 
 
 def main() -> None:
+    """ Главная функция которая регистрирует handlers и запускает бота """
+
     setup_logging()  # Настройка логирования
     application = ApplicationBuilder().token(API_TOKEN).build()
 

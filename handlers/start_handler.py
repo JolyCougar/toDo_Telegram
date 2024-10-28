@@ -4,6 +4,8 @@ from services.db import get_token, Session_local, get_local_mode
 
 
 async def set_commands(context: ContextTypes.DEFAULT_TYPE) -> None:
+    """ Команды кнопки меню """
+
     commands = [
         ("start", "Запустить бота"),
         ("login", "Войти в систему"),
@@ -12,6 +14,8 @@ async def set_commands(context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 def get_main_keyboard(is_authorized: bool, local_mode: bool) -> ReplyKeyboardMarkup:
+    """ Основная клавиатура которая меняется в зависимости от авторизации пользователя """
+
     if is_authorized:
         keyboard = [
             ["Добавить новую задачу"],
@@ -43,6 +47,8 @@ def get_main_keyboard(is_authorized: bool, local_mode: bool) -> ReplyKeyboardMar
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """ Обработка команды /start """
+
     user_id = update.message.from_user.id
     session = Session_local()
     await set_commands(context)
@@ -54,5 +60,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def send_main_keyboard(update: Update, is_authorized: bool, local_mode) -> None:
+    """ Обновление клавиатуры """
+
     reply_markup = get_main_keyboard(is_authorized, local_mode)
     await update.message.reply_text("Выберите действие:", reply_markup=reply_markup)
