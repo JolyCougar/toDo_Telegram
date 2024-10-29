@@ -5,7 +5,7 @@ from services.db import get_token
 from config import DJANGO_API_URL
 from sqlalchemy.orm import Session
 from services.db import Session_local
-from .start_handler import send_main_keyboard
+from .start_handler import send_main_keyboard, set_commands
 
 WAITING_FOR_TASK_ID = range(1)
 
@@ -45,4 +45,5 @@ async def detail_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, task_
 
     is_authorized = token is not None
     await send_main_keyboard(update, is_authorized, local_mode=False)
+    await set_commands(context)
     return ConversationHandler.END

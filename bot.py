@@ -8,7 +8,7 @@ from telegram.ext import (ApplicationBuilder, CommandHandler,
 from handlers.messages_handle import (handle_message, handle_state,
                                       WAITING_FOR_TASK_ID, CONFIRMING_TASK,
                                       WAITING_FOR_TASK_TITLE, WAITING_FOR_TASK_DESCRIPTION,
-                                      DELETE_TASK, WAITING_FOR_LOGIN)
+                                      DELETE_TASK, WAITING_FOR_LOGIN, help_command)
 
 
 def main() -> None:
@@ -33,6 +33,7 @@ def main() -> None:
 
     # Регистрация обработчиков
     application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("help", help_command))
     application.add_handler(conv_handler)  # Регистрация ConversationHandler
 
     application.add_error_handler(error_handler)

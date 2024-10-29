@@ -1,11 +1,11 @@
 import requests
 from telegram import Update
-from telegram.ext import ContextTypes, ConversationHandler
+from telegram.ext import ContextTypes
 from services.db import get_token
 from config import DJANGO_API_URL
 from sqlalchemy.orm import Session
 from services.db import Session_local
-from .start_handler import send_main_keyboard
+from .start_handler import send_main_keyboard, set_commands
 
 
 async def profile_detail(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -13,14 +13,14 @@ async def profile_detail(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     user_id = update.message.from_user.id
     session: Session = Session_local()
-    token = get_token(user_id, session)  # Получаем токен из базы данных
+    token = get_token(user_id, session)
 
     if not token:
         await update.message.reply_text("Вы не авторизованы. Пожалуйста, авторизуйтесь.")
         return
 
     headers = {
-        'Authorization': f'Token {token}'  # Указываем токен в заголовках
+        'Authorization': f'Token {token}'
     }
 
     response = requests.get(f"{DJANGO_API_URL}profile/", headers=headers)
@@ -40,3 +40,4 @@ async def profile_detail(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     is_authorized = token is not None
     await send_main_keyboard(update, is_authorized, local_mode=False)
+    await set_commands(context)

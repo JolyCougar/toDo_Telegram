@@ -5,7 +5,7 @@ from services.db import get_token
 from config import DJANGO_API_URL
 from sqlalchemy.orm import Session
 from services.db import Session_local, delete_task_local, get_local_mode
-from .start_handler import send_main_keyboard
+from .start_handler import send_main_keyboard, set_commands
 
 DELETE_TASK = range(5)
 
@@ -16,7 +16,7 @@ async def delete_task(update: Update, context: ContextTypes.DEFAULT_TYPE, task_i
 
     user_id = update.message.from_user.id
     session: Session = Session_local()
-    token = get_token(user_id, session)  # Получаем токен из базы данных
+    token = get_token(user_id, session)
     local_mode = get_local_mode(user_id, session)
 
     if not token and local_mode:
@@ -26,7 +26,7 @@ async def delete_task(update: Update, context: ContextTypes.DEFAULT_TYPE, task_i
 
     elif token:
         headers = {
-            'Authorization': f'Token {token}'  # Указываем токен в заголовках
+            'Authorization': f'Token {token}'
         }
 
         response = requests.delete(f"{DJANGO_API_URL}tasks/{task_id}/delete/", headers=headers)
@@ -39,4 +39,5 @@ async def delete_task(update: Update, context: ContextTypes.DEFAULT_TYPE, task_i
 
     is_authorized = token is not None
     await send_main_keyboard(update, is_authorized, local_mode)
+    await set_commands(context)
     return ConversationHandler.END

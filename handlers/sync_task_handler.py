@@ -3,7 +3,7 @@ from telegram import Update
 from config import DJANGO_API_URL
 from telegram.ext import ContextTypes
 from services.db import Session_local, get_token, get_tasks_from_local, delete_task_local
-from .start_handler import send_main_keyboard
+from .start_handler import send_main_keyboard, set_commands
 
 
 async def sync_task(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -49,3 +49,4 @@ async def sync_task(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     is_authorized = token is not None
     await update.message.reply_text("Ваши задачи успешно синхронизированны")
     await send_main_keyboard(update, is_authorized, local_mode=False)
+    await set_commands(context)

@@ -3,7 +3,7 @@ from config import DJANGO_API_URL
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
 from services.db import save_token, get_token, Session_local
-from handlers.start_handler import send_main_keyboard
+from handlers.start_handler import send_main_keyboard, set_commands
 from services.db import set_local_mode
 from .start_handler import start
 
@@ -56,7 +56,7 @@ async def logout(update: Update, user_id: int) -> None:
 
     # Отправляем запрос на сервер о выходе
     headers = {
-        'Authorization': f'Token {token}'  # Указываем токен в заголовках
+        'Authorization': f'Token {token}'
     }
     response = requests.post(f"{DJANGO_API_URL}logout/", headers=headers, json={'user_id': user_id})
 

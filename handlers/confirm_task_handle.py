@@ -37,5 +37,6 @@ async def confirm_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, task
 
     is_authorized = token is not None
     await send_main_keyboard(update, is_authorized, local_mode)
+    await set_commands(context)
 
-    return ConversationHandler.END  # Завершаем разговор
+    return ConversationHandler.END

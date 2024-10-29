@@ -1,20 +1,17 @@
-import requests
 from telegram import Update
-from config import DJANGO_API_URL
 from .get_task_handles import get_tasks
 from .task_detail_handlers import detail_tasks
 from .confirm_task_handle import confirm_tasks
 from .profile_handle import profile_detail
 from .delete_handle import delete_task
-from .start_handler import start
 from .sync_task_handler import sync_task
 from .handle_local import handle_local_mode
 from telegram.ext import ContextTypes, ConversationHandler
 from .login_handles import logout, handle_login_input
 from .create_new_task_handle import handle_task_title, handle_task_description
-from services.db import save_token, get_token, Session_local, set_local_mode
 
-""" Состояния бота"""
+
+""" Состояния бота """
 WAITING_FOR_TASK_TITLE = range(1)  # Состояние ожидания названия задачи
 WAITING_FOR_TASK_DESCRIPTION = range(2)  # Состояние ожидания описания задачи
 WAITING_FOR_TASK_ID = range(3)  # Состояние ожидания ID задачи
@@ -28,8 +25,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     message = update.message.text
     user_id = update.message.from_user.id
-    session = Session_local()
-    token = get_token(user_id, session)
 
     if message == "Авторизоваться":
         await update.message.reply_text("Пожалуйста, введите имя пользователя и пароль в формате: username:password")
@@ -70,13 +65,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await sync_task(update, context)
 
 
-# async def request_login_format(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-#     """ Обработка ввода логина и пароля """
-#
-#     if context.user_data.get('state') == WAITING_FOR_LOGIN:
-#         await handle_login_input(update, context)
-
-
 async def handle_state(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """ Внедрение состояния в context """
 
@@ -100,3 +88,11 @@ async def handle_state(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         await update.message.reply_text("Неизвестное состояние. Пожалуйста, начните заново.")
 
     return ConversationHandler.END
+
+
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text("Если у вас возникли проблемы то отправьте команду /start "
+                                    "её также можно отправить с помощью меню. \n"
+                                    "Если у вас возникли какие то сложности, пожалуйста свяжитесь с Администрацией\n"
+                                    "Этот бот создан для улучшения пользовательского опыта при взаимодействии с"
+                                    "приложением toDo app.\n\n Спасибо что используете наш сервис!❤️  ")

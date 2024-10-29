@@ -7,7 +7,8 @@ async def set_commands(context: ContextTypes.DEFAULT_TYPE) -> None:
     """ Команды кнопки меню """
 
     commands = [
-        ("start", "Запустить бота"),
+        ("start", "Перезапустить бота"),
+        ("help", "Описание бота"),
     ]
     await context.bot.set_my_commands(commands)
 
@@ -52,7 +53,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.message.from_user.id
     session = Session_local()
     await set_commands(context)
-    token = get_token(user_id, session)  # Получаем токен из базы данных
+    token = get_token(user_id, session)
     is_authorized = token is not None
     local_mode = get_local_mode(user_id, session)
     reply_markup = get_main_keyboard(is_authorized, local_mode)

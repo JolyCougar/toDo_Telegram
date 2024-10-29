@@ -3,7 +3,7 @@ from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
 from services.db import get_token, Session_local, get_local_mode, add_task
 from config import DJANGO_API_URL
-from .start_handler import send_main_keyboard
+from .start_handler import send_main_keyboard, set_commands
 
 WAITING_FOR_TASK_DESCRIPTION = range(2)
 
@@ -25,7 +25,6 @@ async def handle_task_description(update: Update, context: ContextTypes.DEFAULT_
 
     task_description = update.message.text
     task_title = context.user_data.get('task_title')  # Получаем название задачи
-    # Отправляем данные на ваш Django API
     user_id = update.message.from_user.id
     session = Session_local()
     local_mode = get_local_mode(user_id, session)
@@ -49,13 +48,13 @@ async def handle_task_description(update: Update, context: ContextTypes.DEFAULT_
 
         response = requests.post(f"{DJANGO_API_URL}tasks/create/", json=task_data, headers=headers)
 
-        if response.status_code == 201:  # Успешное создание задачи
+        if response.status_code == 201:
             await update.message.reply_text("Задача успешно добавлена!")
         else:
             await update.message.reply_text("Ошибка при добавлении задачи. Проверьте данные и попробуйте снова.")
 
-        # Сброс состояния
         context.user_data.clear()
     is_authorized = token is not None
     await send_main_keyboard(update, is_authorized, local_mode)
+    await set_commands(context)
     return ConversationHandler.END
