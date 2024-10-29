@@ -8,7 +8,6 @@ async def set_commands(context: ContextTypes.DEFAULT_TYPE) -> None:
 
     commands = [
         ("start", "Запустить бота"),
-        ("login", "Войти в систему"),
     ]
     await context.bot.set_my_commands(commands)
 

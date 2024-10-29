@@ -37,11 +37,11 @@ async def sync_task(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                                      )
 
         if response.status_code == 201:  # Успешное создание задач
-            await update.message.reply_text("Задачи успешно добавлены!")
+            await update.message.reply_text("Начинается удаление локальных задач!")
             for task in user_tasks:
                 delete_task_local(task.id, session)
         else:
-            await update.message.reply_text(f"Ошибка при добавлении задач: {response.status_code} - {response.text}")
+            await update.message.reply_text(f"Ошибка при добавлении задач: {response.status_code}")
 
         # Сброс состояния
         context.user_data.clear()
