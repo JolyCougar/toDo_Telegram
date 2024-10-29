@@ -9,6 +9,8 @@ WAITING_FOR_TASK_DESCRIPTION = range(2)
 
 
 async def handle_task_title(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """ Получение от пользователя название задачи """
+
     task_title = update.message.text  # Получаем название задачи от пользователя
     context.user_data['task_title'] = task_title  # Сохраняем название задачи в контексте
 
@@ -18,6 +20,9 @@ async def handle_task_title(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
 
 async def handle_task_description(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """ Получение описания задачи пользователя
+    и добавление ее в локальную бд или на сервер """
+
     task_description = update.message.text
     task_title = context.user_data.get('task_title')  # Получаем название задачи
     # Отправляем данные на ваш Django API

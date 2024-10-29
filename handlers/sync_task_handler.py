@@ -7,6 +7,9 @@ from .start_handler import send_main_keyboard
 
 
 async def sync_task(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """ Функция синхроназации задач, отправляет локальные
+    задачи на сервер и удаляет из локальной БД """
+
     user_id = update.message.from_user.id
     session = Session_local()
     token = get_token(user_id, session)
@@ -28,7 +31,10 @@ async def sync_task(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 'complete': task.is_completed
             }
             # Отправка задач на сервер
-            response = requests.post(f"{DJANGO_API_URL}tasks/create/", json=task_data, headers=headers)
+            response = requests.post(f"{DJANGO_API_URL}tasks/create/",
+                                     json=task_data,
+                                     headers=headers
+                                     )
 
         if response.status_code == 201:  # Успешное создание задач
             await update.message.reply_text("Задачи успешно добавлены!")

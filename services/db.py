@@ -15,7 +15,7 @@ Base.metadata.create_all(engine)
 
 
 def save_token(user_id, token):
-    """ Сохранение токена в БД """
+    """ Сохранение токена авторизации в БД """
 
     session = Session_local()
     user_token = UserToken(user_id=user_id, token=token)
@@ -25,7 +25,7 @@ def save_token(user_id, token):
 
 
 def get_token(user_id: int, session: Session_local) -> str:
-    """ Получение токена из БД """
+    """ Получение токена авторизации из БД """
 
     user = session.query(UserToken).filter(UserToken.user_id == user_id).first()
     return user.token if user else None

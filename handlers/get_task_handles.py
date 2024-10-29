@@ -9,6 +9,10 @@ from .start_handler import send_main_keyboard
 
 
 async def get_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, complete: str) -> None:
+    """ Получение задач либо с сервера, либо из локальной БД,
+        в зависимости от флага complete может выдать
+        либо выполненые задачи, либо не выполненые """
+
     user_id = update.message.from_user.id
     session: Session = Session_local()
     local_mode = get_local_mode(user_id, session)

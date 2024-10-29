@@ -13,7 +13,7 @@ from handlers.messages_handle import (handle_message, handle_task_id,
 
 
 def main() -> None:
-    """ Главная функция которая регистрирует handlers и запускает бота """
+    """ Главная функция, регистрирует handlers и запускает бота """
 
     setup_logging()  # Настройка логирования
     application = ApplicationBuilder().token(API_TOKEN).build()

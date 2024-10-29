@@ -10,6 +10,10 @@ CONFIRMING_TASK = range(2)
 
 
 async def confirm_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, task_id: str) -> None:
+    """ Меняет статус задачи на выполнено,
+        в зависимости от авторизации либо
+        локально либо на сервере """
+
     user_id = update.message.from_user.id
     session: Session = Session_local()
     token = get_token(user_id, session)  # Получаем токен из базы данных

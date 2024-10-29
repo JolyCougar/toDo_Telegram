@@ -5,6 +5,8 @@ Base = declarative_base()
 
 
 class UserToken(Base):
+    """ Модель user для локальной таблицы """
+
     __tablename__ = 'user_tokens'
 
     user_id = Column(BigInteger, primary_key=True)
@@ -13,6 +15,8 @@ class UserToken(Base):
 
 
 class Task(Base):
+    """ Модель задачи для локальной таблицы """
+
     __tablename__ = 'tasks'
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
