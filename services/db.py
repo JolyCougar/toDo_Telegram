@@ -59,15 +59,16 @@ def add_task(user_id: int, title: str, description: str, session: Session_local)
     return new_task
 
 
-def delete_task_local(task_id: int, session: Session_local) -> bool:
-    """ Удаление задачи из локальной БД """
+def delete_task_local(task_id: int, user_id: int, session: Session_local) -> bool:
+    """ Удаление задачи из локальной БД, если она принадлежит пользователю """
 
-    task = session.query(Task).filter_by(id=task_id).first()
+    task = session.query(Task).filter_by(id=task_id, user_id=user_id).first()
     if task:
         session.delete(task)
         session.commit()
         return True
     return False
+
 
 
 def complete_task(task_id: int, session: Session_local) -> bool:

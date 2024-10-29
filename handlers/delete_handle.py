@@ -20,10 +20,11 @@ async def delete_task(update: Update, context: ContextTypes.DEFAULT_TYPE, task_i
     local_mode = get_local_mode(user_id, session)
 
     if not token and local_mode:
-        delete_task_local(int(task_id), session)
-        await update.message.reply_text(f"Задача номер {task_id} успешно удалена.")
-        await update.message.reply_text("Вы не авторизованы. Бот работает в локальном режиме.")
-
+        if delete_task_local(int(task_id), user_id, session):
+            await update.message.reply_text(f"Задача номер {task_id} успешно удалена.")
+            await update.message.reply_text("Вы не авторизованы. Бот работает в локальном режиме.")
+        else:
+            await update.message.reply_text("Неверно указан ID задачи")
     elif token:
         headers = {
             'Authorization': f'Token {token}'
