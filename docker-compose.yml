@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    command: python ./bot.py
+    depends_on:
+      - db
+    networks:
+      - telegram
+    restart: always
+
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgresql_user_dev
+      - POSTGRES_PASSWORD=postgresql_password
+      - POSTGRES_DB=postgresql
+    networks:
+      - telegram
+    restart: always
+
+
+volumes:
+  postgres_data:
+
+networks:
+  telegram:
+    driver: bridge
