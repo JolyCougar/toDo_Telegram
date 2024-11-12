@@ -1,25 +1,26 @@
 version: '3'
 
 services:
-  web:
+  bot:
     build:
       context: ./
       dockerfile: Dockerfile
+    env_file:
+      - .env
     command: python ./bot.py
     depends_on:
-      - db
+      - local_db
     networks:
       - telegram
     restart: always
 
-  db:
+  local_db:
     image: postgres:16-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=postgresql_user_dev
-      - POSTGRES_PASSWORD=postgresql_password
-      - POSTGRES_DB=postgresql
+    env_file:
+      - ./db.env
+
     networks:
       - telegram
     restart: always
