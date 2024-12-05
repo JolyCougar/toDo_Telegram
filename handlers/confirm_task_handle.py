@@ -8,6 +8,7 @@ from .start_handler import send_main_keyboard, set_commands
 
 CONFIRMING_TASK = range(2)
 
+
 async def confirm_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, task_id: str) -> None:
     """ Меняет статус задачи на выполнено,
         в зависимости от авторизации либо

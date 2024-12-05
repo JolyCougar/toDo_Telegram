@@ -10,7 +10,6 @@ from telegram.ext import ContextTypes, ConversationHandler
 from .login_handles import logout, handle_login_input
 from .create_new_task_handle import handle_task_title, handle_task_description
 
-
 """ Состояния бота """
 WAITING_FOR_TASK_TITLE = range(1)  # Состояние ожидания названия задачи
 WAITING_FOR_TASK_DESCRIPTION = range(2)  # Состояние ожидания описания задачи

@@ -33,9 +33,9 @@ async def sync_task(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             # Отправка задач на сервер
             async with httpx.AsyncClient() as client:
                 response = await client.post(f"{DJANGO_API_URL}tasks/create/",
-                                     json=task_data,
-                                     headers=headers
-                                     )
+                                             json=task_data,
+                                             headers=headers
+                                             )
 
         if response.status_code == 201:  # Успешное создание задач
             await update.message.reply_text("Начинается удаление локальных задач!")
