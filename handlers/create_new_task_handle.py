@@ -1,4 +1,4 @@
-import requests
+import httpx
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
 from services.db import get_token, Session_local, get_local_mode, add_task
@@ -46,7 +46,8 @@ async def handle_task_description(update: Update, context: ContextTypes.DEFAULT_
             'description': task_description
         }
 
-        response = requests.post(f"{DJANGO_API_URL}tasks/create/", json=task_data, headers=headers)
+        async with httpx.AsyncClient() as client:
+            response = await client.post(f"{DJANGO_API_URL}tasks/create/", json=task_data, headers=headers)
 
         if response.status_code == 201:
             await update.message.reply_text("Задача успешно добавлена!")

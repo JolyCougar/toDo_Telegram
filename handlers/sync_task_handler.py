@@ -1,4 +1,4 @@
-import requests
+import httpx
 from telegram import Update
 from config import DJANGO_API_URL
 from telegram.ext import ContextTypes
@@ -31,7 +31,8 @@ async def sync_task(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 'complete': task.is_completed
             }
             # Отправка задач на сервер
-            response = requests.post(f"{DJANGO_API_URL}tasks/create/",
+            async with httpx.AsyncClient() as client:
+                response = await client.post(f"{DJANGO_API_URL}tasks/create/",
                                      json=task_data,
                                      headers=headers
                                      )

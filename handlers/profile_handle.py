@@ -1,4 +1,4 @@
-import requests
+import httpx
 from telegram import Update
 from telegram.ext import ContextTypes
 from services.db import get_token
@@ -22,8 +22,8 @@ async def profile_detail(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     headers = {
         'Authorization': f'Token {token}'
     }
-
-    response = requests.get(f"{DJANGO_API_URL}profile/", headers=headers)
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"{DJANGO_API_URL}profile/", headers=headers)
 
     if response.status_code == 200:
         profile = response.json()

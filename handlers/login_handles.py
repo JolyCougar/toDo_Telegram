@@ -1,4 +1,4 @@
-import requests
+import httpx
 from config import DJANGO_API_URL
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
@@ -12,8 +12,8 @@ WAITING_FOR_LOGIN = range(6)
 
 async def handle_login(update: Update, context: ContextTypes.DEFAULT_TYPE, username: str, password: str) -> None:
     """ Обработка логики авторизации """
-
-    response = requests.post(f"{DJANGO_API_URL}login/", data={'username': username, 'password': password})
+    async with httpx.AsyncClient() as client:
+        response = await client.post(f"{DJANGO_API_URL}login/", data={'username': username, 'password': password})
 
     if response.status_code == 200:
         token = response.json().get('token')
@@ -58,7 +58,8 @@ async def logout(update: Update, user_id: int) -> None:
     headers = {
         'Authorization': f'Token {token}'
     }
-    response = requests.post(f"{DJANGO_API_URL}logout/", headers=headers, json={'user_id': user_id})
+    async with httpx.AsyncClient() as client:
+        response = await client.post(f"{DJANGO_API_URL}logout/", headers=headers, json={'user_id': user_id})
 
     if response.status_code == 200:
         await update.message.reply_text("Вы вышли из системы.")

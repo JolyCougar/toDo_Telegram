@@ -1,4 +1,4 @@
-import requests
+import httpx
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
 from services.db import get_token
@@ -29,8 +29,8 @@ async def delete_task(update: Update, context: ContextTypes.DEFAULT_TYPE, task_i
         headers = {
             'Authorization': f'Token {token}'
         }
-
-        response = requests.delete(f"{DJANGO_API_URL}tasks/{task_id}/delete/", headers=headers)
+        async with httpx.AsyncClient() as client:
+            response = await client.delete(f"{DJANGO_API_URL}tasks/{task_id}/delete/", headers=headers)
 
         if response.status_code == 204:
             await update.message.reply_text(f"Задача ID {task_id} успешно удалена")

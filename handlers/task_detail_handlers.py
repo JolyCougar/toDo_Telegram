@@ -1,4 +1,4 @@
-import requests
+import httpx
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
 from services.db import get_token
@@ -24,8 +24,8 @@ async def detail_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE, task_
     headers = {
         'Authorization': f'Token {token}'  # Указываем токен в заголовках
     }
-
-    response = requests.get(f"{DJANGO_API_URL}tasks/{task_id}/", headers=headers)
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"{DJANGO_API_URL}tasks/{task_id}/", headers=headers)
 
     if response.status_code == 200:
         task = response.json()
